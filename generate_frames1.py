@@ -1,5 +1,8 @@
 import cv2
 import mediapipe as mp
+
+# importing the requests library
+import requests
 import numpy as np
 from IPython.display import display
 import time
@@ -11,16 +14,22 @@ mp_drawing = mp.solutions.drawing_utils
 mp_holistic = mp.solutions.holistic
 mp_drawing.DrawingSpec(color=(0, 0, 255), thickness=1, circle_radius=1)
 
+
+global cap, frame, switch, counter, capture
+switch = 1
 cap = cv2.VideoCapture(0)
+capture = 0
+counter = 0
+params = {"counter": counter}
 
 
 def generate_frames1():
     tol_angle = get_tolerance("mild")
-    counter = 0
     stage = None
     starttime = time.time()
     lasttime = starttime
     flag = None
+    counter = 0
 
     cap = cv2.VideoCapture(0)
     with mp_holistic.Holistic(
@@ -171,6 +180,14 @@ def generate_frames1():
 
                 ret, buffer = cv2.imencode(".jpg", image)
                 image = buffer.tobytes()
-                if cv2.waitKey(5) & 0xFF == 27:
+
+                if counter >= 1:
+                    params["counter"] = counter
+                    r = requests.get(url="http://127.0.0.1:5000/score", params=params)
+
+                if capture:
+                    params["counter"] = counter
+                    # url = "http://127.0.0.1:5000/score?counter=" + string(counter)
+                    r = requests.get(url="http://127.0.0.1:5000/score", params=params)
                     break
             yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + image + b"\r\n")
