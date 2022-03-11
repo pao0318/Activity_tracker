@@ -2,9 +2,19 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import time
+import requests
+from IPython.display import display
 
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
+capture = 0
+
+def get_tolerance(str):
+    if str == "low":
+        tol_angle = 10
+    else:
+        tol_angle = 20
+    return tol_angle
 
 
 def calculate_angle(a, b, c):
@@ -34,7 +44,8 @@ def calculate_angle_lateral(a, b, c):
     return angle
 
 
-def elbowFlexion(threshtime=2):
+
+def elbowFlexion(severity='low', threshtime=2):
     cap = cv2.VideoCapture(0)
 
     # Curl counter variables
@@ -43,15 +54,21 @@ def elbowFlexion(threshtime=2):
     t1 = t2 = 0
     times = [0] * 4
     feedback = None
+    tol_angle = get_tolerance(severity)
+    error = 0
+    params = {"counter": counter, "timer": 0, "error": error}
 
     # Setup mediapipe instance
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
         while cap.isOpened():
             ret, frame = cap.read()
+            if not ret:
+                break
 
             # Recolor image to RGB
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             image.flags.writeable = False
+            
 
             # Make detection
             results = pose.process(image)
@@ -83,22 +100,22 @@ def elbowFlexion(threshtime=2):
                             )
 
                 # Curl counter logic
-                if angle > 160 and (stage is None or stage == 'up'):
+                if angle > 160 - tol_angle and (stage is None or stage == 'up'):
                     if stage == 'up':
                         times[(counter-1) % 4] = abs(t2-t1)
 
                     t1 = time.time()
                     t2 = t1
 
-                if angle > 160:
+                if angle > 160 - tol_angle:
                     stage = "down"
 
-                if angle < 35 and stage == 'down':
+                if angle < 35 + tol_angle and stage == 'down':
                     stage = "up"
                     counter += 1
                     # print(counter)
 
-                if angle < 35:
+                if angle < 35 + tol_angle:
                     t2 = time.time()
 
             except:
@@ -137,8 +154,10 @@ def elbowFlexion(threshtime=2):
             if counter % 4 == 0 and counter != 0:
                 if (np.mean(times) - threshtime) > threshtime/4:
                     feedback = 'Do Fast'
+                    error += 1
                 elif (threshtime - np.mean(times)) > threshtime/4:
                     feedback = 'Do slow'
+                    error += 1
                 else:
                     feedback = 'Doing good'
 
@@ -154,13 +173,24 @@ def elbowFlexion(threshtime=2):
                                           color=(245, 66, 230), thickness=2, circle_radius=1)
                                       )
 
-            cv2.imshow('Mediapipe Feed', image)
+            # cv2.imshow("images1",image)
+            ret, buffer = cv2.imencode(".jpg", image)
+            image = buffer.tobytes()
+            
+            if counter >= 1:
+                params["counter"] = counter
+                tim = time.time()
+                params["timer"] = np.round(tim, 2)
+                params["error"] = error
+                r = requests.get(
+                    url="http://127.0.0.1:5000/score", params=params)
+            # if capture:
+            #         params["counter"] = counter
+            #         r = requests.get(url="http://127.0.0.1:5000/score", params=params)
+            #         break
 
-            if cv2.waitKey(10) & 0xFF == ord('q'):
-                break
+            yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + image + b"\r\n")
 
-        cap.release()
-        cv2.destroyAllWindows()
 
 
 def lateralFlexion(threshtime=5):

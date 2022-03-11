@@ -10,6 +10,7 @@ from PIL import Image
 import time
 
 from generate_frames1 import *
+from exercises import *
 
 
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -28,7 +29,7 @@ def index():
 @app.route("/video1")
 def video1():
     return Response(
-        generate_frames1(), mimetype="multipart/x-mixed-replace; boundary=frame"
+        elbowFlexion(), mimetype="multipart/x-mixed-replace; boundary=frame"
     )
 
 
