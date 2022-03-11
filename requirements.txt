@@ -4,5 +4,4 @@ mediapipe
 IPython
 requests
 datetime
-time
 pillow
