@@ -5,3 +5,4 @@ IPython
 requests
 datetime
 pillow
+gunicorn
