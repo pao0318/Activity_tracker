@@ -1,2 +1,8 @@
 flask
 opencv-python
+mediapipe
+IPython
+requests
+datetime
+time
+pillow
