@@ -2,14 +2,12 @@ from flask import Flask, render_template, Response, request
 import json
 
 import cv2
-import datetime, time
+import datetime
 import os, sys
 import numpy as np
-from IPython.display import display
-from PIL import Image
+
 import time
 
-from generate_frames1 import *
 from exercises import *
 
 

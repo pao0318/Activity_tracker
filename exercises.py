@@ -3,7 +3,6 @@ import mediapipe as mp
 import numpy as np
 import time
 import requests
-from IPython.display import display
 
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose

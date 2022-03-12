@@ -1,8 +1,0 @@
-flask
-opencv-python
-mediapipe
-IPython
-requests
-datetime
-pillow
-gunicorn
