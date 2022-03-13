@@ -1,6 +1,5 @@
 from flask import Flask, render_template, Response, request
 import json
-import cv2
 import datetime
 import os, sys
 import numpy as np
