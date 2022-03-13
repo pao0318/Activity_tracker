@@ -9,7 +9,7 @@ import time
 
 from exercises import *
 
-
+port=5000
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_drawing = mp.solutions.drawing_utils
 mp_holistic = mp.solutions.holistic
@@ -65,4 +65,4 @@ def tasks():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=port,debug=True)
