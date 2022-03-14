@@ -62,20 +62,21 @@ def elbowFlexion(severity='low', threshtime=2):
 
     # Setup mediapipe instance
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
-        while True:
+        while cap.isOpened():
             ret,frame = cap.read()
             
+            image=frame
             # Recolor image to RGB
-            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            image.flags.writeable = False
+            # image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            # image.flags.writeable = False
             
 
             # Make detection
             results = pose.process(image)
 
             # Recolor back to BGR
-            image.flags.writeable = True
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            # image.flags.writeable = True
+            # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
             # Extract landmarks
             try:
