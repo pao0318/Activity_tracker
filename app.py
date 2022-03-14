@@ -30,7 +30,6 @@ def video1():
 
 @app.route("/exercise1")
 def exercise1():
-    counter = 0
     return render_template("exercise1.html")
 
 
@@ -41,7 +40,7 @@ def score():
     if request.method == "GET":
         counter = request.args.get("counter")
     else:
-        # counter = request.args.get("counter")
+        global counter
         print("final is", counter)
         return render_template("results.html", res=counter)
 
