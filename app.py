@@ -14,7 +14,8 @@ mp_holistic = mp.solutions.holistic
 mp_drawing.DrawingSpec(color=(0, 0, 255), thickness=1, circle_radius=1)
 
 app = Flask(__name__)
-
+global counter
+counter=0
 
 @app.route("/")
 def index():
@@ -40,7 +41,6 @@ def score():
     if request.method == "GET":
         cntr = request.args.get("counter")
     else:
-        global counter
         counter=cntr
         print("final is", cntr)
         return render_template("results.html", res=counter)
