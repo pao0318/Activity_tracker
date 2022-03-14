@@ -2,7 +2,7 @@ import mediapipe as mp
 import numpy as np
 import time
 import cv2
-from imutils.video import VideoStream
+# from imutils.video import VideoStream
 import requests
 
 mp_drawing = mp.solutions.drawing_utils
@@ -46,8 +46,9 @@ def calculate_angle_lateral(a, b, c):
 
 
 def elbowFlexion(severity='low', threshtime=2):
-    # cap = cv2.VideoCapture(-1)
-    cap=VideoStream(src = 0).start()
+    cap = cv2.VideoCapture(0)
+    # cap=VideoStream(src = 0).start()
+
 
     # Curl counter variables
     counter = 0
@@ -62,7 +63,7 @@ def elbowFlexion(severity='low', threshtime=2):
     # Setup mediapipe instance
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
         while True:
-            frame = cap.read()
+            ret,frame = cap.read()
             
             # Recolor image to RGB
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
