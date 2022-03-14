@@ -1,7 +1,7 @@
 import mediapipe as mp
 import numpy as np
 import time
-import imutils
+import cv2
 from imutils.video import VideoStream
 import requests
 
