@@ -1,1 +1,1 @@
-web: gunicorn app.wsgi:application --log-file -
+web: python app.py runserver 0.0.0.0:5000
