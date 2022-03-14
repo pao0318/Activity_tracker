@@ -7,15 +7,15 @@ import numpy as np
 import time
 
 from exercises import *
-
+global counter
+counter=0
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_drawing = mp.solutions.drawing_utils
 mp_holistic = mp.solutions.holistic
 mp_drawing.DrawingSpec(color=(0, 0, 255), thickness=1, circle_radius=1)
 
 app = Flask(__name__)
-global counter
-counter=0
+
 
 @app.route("/")
 def index():

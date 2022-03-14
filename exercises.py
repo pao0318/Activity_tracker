@@ -45,7 +45,7 @@ def calculate_angle_lateral(a, b, c):
 
 
 def elbowFlexion(severity='low', threshtime=2):
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(-1)
 
     # Curl counter variables
     counter = 0
