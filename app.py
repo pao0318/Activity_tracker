@@ -36,12 +36,13 @@ def exercise1():
 
 @app.route("/score", methods=["GET", "POST"])
 def score():
-    global counter
+    cntr=0
     if request.method == "GET":
-        counter = request.args.get("counter")
+        cntr = request.args.get("counter")
     else:
         global counter
-        print("final is", counter)
+        counter=cntr
+        print("final is", cntr)
         return render_template("results.html", res=counter)
 
     return render_template("index.html", res=counter)
