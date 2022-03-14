@@ -7,8 +7,7 @@ import numpy as np
 import time
 
 from exercises import *
-global counter
-counter=0
+
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_drawing = mp.solutions.drawing_utils
 mp_holistic = mp.solutions.holistic
@@ -37,12 +36,11 @@ def exercise1():
 
 @app.route("/score", methods=["GET", "POST"])
 def score():
-    cntr=0
+    global counter
     if request.method == "GET":
-        cntr = request.args.get("counter")
+        counter = request.args.get("counter")
     else:
-        counter=cntr
-        print("final is", cntr)
+        print("final is", counter)
         return render_template("results.html", res=counter)
 
     return render_template("index.html", res=counter)
