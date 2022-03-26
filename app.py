@@ -420,6 +420,7 @@ def image(data_image):
         print("Here Raise")
         audio=gTTS(text="Raise your arms", lang="en",slow=False)
         audio.save("feedback.mp3")
+        os.system("start feedback.mp3")
 
     elif(time.time()-vars.feedback_lower_time>5):
         print("Here Lower")
