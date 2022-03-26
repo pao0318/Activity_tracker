@@ -414,6 +414,7 @@ def image(data_image):
 
 # Voice to do
     if(vars.feedback_lower_time-time.time()>5):
+        print("Lower")
         audio=gTTS(text="Lower your arms", lang="en",slow=False)
         audio.save("feedback.mp3")
 
