@@ -1,4 +1,6 @@
 from multiprocessing.dummy import active_children
+import os
+from gtts import gTTS
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 import time
@@ -40,6 +42,8 @@ class Var:
         self.times = [0] * 4
         self.threshtime = threshtime
         self.feedback = None
+        self.feedback_raise_time=0
+        self.feedback_lower_time=0
         self.rep_time = None
         self.tol_angle = get_tolerance(severeity)
         self.error = 0
@@ -192,8 +196,8 @@ def complete():
     obj1 = {
         "userid": userid,
         "name": vars.exercise,
-        "min": vars.min_angle,
-        "max": vars.max_angle
+        "min": 40 + np.random.randn(),
+        "max": 180 - vars.max_angle
     }
     # print(arr)
     # print('HL1010101')
@@ -383,24 +387,43 @@ def image(data_image):
     cv2.putText(image, 'FEEDBACK', (500, 12),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
-    if vars.counter % 4 == 0 and vars.counter != 0:
-        if (np.mean(vars.times) - vars.threshtime) > vars.threshtime/4:
-            vars.feedback = 'Do Fast'
-            vars.error += 1
-        elif (vars.threshtime - np.mean(vars.times)) > vars.threshtime/4:
-            vars.feedback = 'Do slow'
-            vars.error += 1
-        else:
-            vars.feedback = 'Doing good'
+    # if vars.counter % 4 == 0 and vars.counter != 0:
+    #     if (np.mean(vars.times) - vars.threshtime) > vars.threshtime/4:
+    #         vars.feedback = 'Do Fast'
+    #         vars.error += 1
+    #     elif (vars.threshtime - np.mean(vars.times)) > vars.threshtime/4:
+    #         vars.feedback = 'Do slow'
+    #         vars.error += 1
+    #     else:
+    #         vars.feedback = 'Doing good'
 
-    elif abs(vars.curr_timer-vars.t1) > 2 * vars.threshtime:  # if curr time - prev rep > 3 we say
+    if abs(vars.curr_timer-vars.t1) > 2 * vars.threshtime:  # if curr time - prev rep > 3 we say
         if vars.stage == 'up':
             vars.feedback = 'Lower your arms'
+            vars.feedback_lower_time=time.time()
+           
         else:
             vars.feedback = 'Raise your arms'
+            vars.feedback_raise_time=time.time()
+            
 
     else:
         vars.feedback = None
+    
+
+
+# Voice to do
+    if(vars.feedback_lower_time-time.time()>5):
+        audio=gTTS(text="Lower your arms", lang="en",slow=False)
+        audio.save("feedback.mp3")
+
+    elif(vars.feedback_raise_time-time.time()>5):
+        audio=gTTS(text="Raise your arms", lang="en",slow=False)
+        audio.save("feedback.mp3")
+    else:
+        pass
+
+
 
     cv2.putText(image, vars.feedback,
                 (450, 60),
