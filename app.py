@@ -400,12 +400,13 @@ def image(data_image):
     if abs(vars.curr_timer-vars.t1) > 2 * vars.threshtime:  # if curr time - prev rep > 3 we say
         if vars.stage == 'up':
             vars.feedback = 'Lower your arms'
-            vars.feedback_lower_time=time.time()
+            if(vars.feedback_raise_time==0):
+                vars.feedback_lower_time=time.time()
            
         else:
             vars.feedback = 'Raise your arms'
-            vars.feedback_raise_time=time.time()
-            
+            if(vars.feedback_raise_time==0):
+                vars.feedback_raise_time=time.time()
 
     else:
         vars.feedback = None
@@ -413,16 +414,19 @@ def image(data_image):
 
 
 # Voice to do
-    if(vars.feedback_lower_time-time.time()>5):
-        print("Lower")
+    if(vars.feedback==None):
+        pass
+    elif(time.time()-vars.feedback_raise_time>5):
+        print("Here Raise")
+        audio=gTTS(text="Raise your arms", lang="en",slow=False)
+        audio.save("feedback.mp3")
+
+    elif(time.time()-vars.feedback_lower_time>5):
+        print("Here Lower")
         audio=gTTS(text="Lower your arms", lang="en",slow=False)
         audio.save("feedback.mp3")
 
-    elif(vars.feedback_raise_time-time.time()>5):
-        audio=gTTS(text="Raise your arms", lang="en",slow=False)
-        audio.save("feedback.mp3")
-    else:
-        pass
+        
 
 
 
