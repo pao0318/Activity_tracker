@@ -24,25 +24,30 @@
       <input
         class="btn btn-primary btn-lg"
         type="submit"
-        value="Lateral Flexion"
-        name="Lateral Flexion"
+        value="lateralFlexion"
+        name="lateralFlexion"
       />
     </form>
-    <form method="post" action="{{ url_for('kneeChest') }}">
-      <input
-        class="btn btn-primary btn-lg"
-        type="submit"
-        value="Knee to Chest"
-        name="Knee to Chest"
-      />
-    </form>
+
     <form method="post" action="{{ url_for('lunges') }}">
       <input
         class="btn btn-primary btn-lg"
         type="submit"
-        value="Lunges"
-        name="Lunges"
+        value="lunges"
+        name="lunges"
       />
     </form>
+
+    <form method="post" action="{{ url_for('squats') }}">
+      <input
+        class="btn btn-primary btn-lg"
+        type="submit"
+        value="squats"
+        name="squats"
+      />
+    </form>
+
+
+   
   </body>
 </html>

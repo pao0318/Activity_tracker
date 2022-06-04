@@ -34,20 +34,26 @@
 
   <body>
 
-    <div class="video">
-      <img id="photo" width="640" height="480" />
-      <h1>video</h1>
+    <div class="videobg">
+      <div class="video">
+        <img id="photo" width="640" height="480" />
+        <h1>video</h1>
+      </div>
     </div>
+    
 
     <div id="container">
       <video autoplay playsinline id="videoElement"></video>
       <canvas id="canvas" width="640" height="480"></canvas>
     </div>
+ 
 
    <style>
      #videoElement{
        visibility: hidden
      }
+
+   
    </style>
 
     <script type="text/javascript" charset="utf-8">

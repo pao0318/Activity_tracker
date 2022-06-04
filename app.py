@@ -1,9 +1,9 @@
 from multiprocessing.dummy import active_children
 import os
-from gtts import gTTS
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 import time
+from playsound import playsound
 import io
 from PIL import Image
 import base64
@@ -118,37 +118,6 @@ def index():
     return render_template('index.html')
 
 
-@app.route("/squats/<url>", methods=['POST', 'GET'])
-def squats(url):
-    vars.reset()
-    arr = url.split(",", 5)
-    global obj
-    global userid
-    global exercise
-    global severity
-    global expertime
-    global exerciseid
-    global activityid
-
-    severity = arr[0]
-    expertime = arr[1]
-    userid = arr[2]
-    exerciseid = arr[3]
-    activityid = arr[4]
-
-    exercise = "squats"
-
-    obj = {
-        "severity": severity,
-        "expertime": expertime,
-        "userid": userid,
-        "exercise": exercise,
-        "exerciseid": exerciseid,
-        "activityid": activityid
-    }
-
-    return render_template("squats.html")
-
 
 @app.route("/elbowFlexion", methods=['POST', 'GET'])
 def elbowFlexion():
@@ -174,6 +143,11 @@ def lunges():
     return render_template("lunges.html")
 
 
+@app.route("/squats", methods=['POST', 'GET'])
+def squats():
+    vars.reset()
+    return render_template("squats.html")
+
 @app.route("/stop", methods=['POST', 'GET'])
 def stop():
     vars.reset()
@@ -194,14 +168,10 @@ def complete():
     global userid
 
     obj1 = {
-        "userid": userid,
         "name": vars.exercise,
-        "min": 40 + np.random.randn(),
-        "max": 180 - vars.max_angle
+        "min": vars.min_angle,
+        "max": vars.max_angle
     }
-    # print(arr)
-    # print('HL1010101')
-    # print(obj1)
 
     headers = {"Content-Type": "application/json"}
     dictToSend = json.dumps(obj1)
@@ -227,17 +197,10 @@ def squats_lunges_complete():
     obj1 = {
         "counter": vars.counter,
         "timer": vars.timer,
-        "error": vars.error,
-        "userid": userid,
-        "hand": '',
+      
         "exercisename": vars.exercise,
-        "exerciseid": exerciseid,
-        "activityid": activityid,
-    }
 
-    # print(arr)
-    # print('HL1010101')
-    # print(obj1)
+    }
 
     headers = {"Content-Type": "application/json"}
     dictToSend = json.dumps(obj1)
@@ -387,46 +350,21 @@ def image(data_image):
     cv2.putText(image, 'FEEDBACK', (500, 12),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
-    # if vars.counter % 4 == 0 and vars.counter != 0:
-    #     if (np.mean(vars.times) - vars.threshtime) > vars.threshtime/4:
-    #         vars.feedback = 'Do Fast'
-    #         vars.error += 1
-    #     elif (vars.threshtime - np.mean(vars.times)) > vars.threshtime/4:
-    #         vars.feedback = 'Do slow'
-    #         vars.error += 1
-    #     else:
-    #         vars.feedback = 'Doing good'
 
     if abs(vars.curr_timer-vars.t1) > 2 * vars.threshtime:  # if curr time - prev rep > 3 we say
         if vars.stage == 'up':
             vars.feedback = 'Lower your arms'
-            if(vars.feedback_raise_time==0):
-                vars.feedback_lower_time=time.time()
-           
+            vars.feedback_lower_time=time.time()
+
         else:
             vars.feedback = 'Raise your arms'
-            if(vars.feedback_raise_time==0):
-                vars.feedback_raise_time=time.time()
+            vars.feedback_raise_time=time.time() 
 
     else:
         vars.feedback = None
     
 
 
-# Voice to do
-    if(vars.feedback==None):
-        pass
-    elif(time.time()-vars.feedback_raise_time>5):
-        print("Here Raise")
-        audio=gTTS(text="Raise your arms", lang="en",slow=False)
-        audio.save("feedback.mp3")
-
-    elif(time.time()-vars.feedback_lower_time>5):
-        print("Here Lower")
-        audio=gTTS(text="Lower your arms", lang="en",slow=False)
-        audio.save("feedback.mp3")
-
-        
 
 
 
@@ -948,7 +886,7 @@ def image(data_image):
                     )
 
         # Curl counter logic
-        if angle > 85 - vars.tol_angle and (vars.stage is None or vars.stage == 'up'):
+        if angle >  45 - vars.tol_angle and (vars.stage is None or vars.stage == 'up'):
             if vars.stage == 'up':
                 vars.t2 = time.time()  # curr rep time
                 # storing to track average time per rep
@@ -958,7 +896,7 @@ def image(data_image):
 
             vars.t1 = time.time()  # previous rep time
 
-        if angle > 85 - vars.tol_angle:
+        if angle > 45 - vars.tol_angle:
             vars.stage = "down"
 
         if angle < 5 + vars.tol_angle and vars.stage == 'down':
