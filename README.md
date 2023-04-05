@@ -8,8 +8,8 @@
 3. You must have python and pip installed in your system
     Make a virtual environment:
     + ` pip install virtualenv `
-    + ` python -m create virtualenv testenv `
-    + ` testenv\Scripts\activate.ps1 `
+    + ` virtualenv testenv `
+    + ` testenv\Scripts\activate.bat `
     + ` pip install -r requirements.txt `
     + ` python app.py `
      
